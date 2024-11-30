@@ -19,3 +19,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo_app.png
+    - assets/usuario.png
+    - assets/persona.jpg
