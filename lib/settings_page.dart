@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/login_view.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -50,7 +51,10 @@ class SettingsPage extends StatelessWidget {
               leading: const Icon(Icons.logout),
               title: const Text('Cerrar Sesión'),
               onTap: () {
-                // Lógica para cerrar sesión
+                Navigator.push(
+                  context,
+                    MaterialPageRoute(builder: (context) => const LoginView()),
+                );
               },
             ),
           ],
