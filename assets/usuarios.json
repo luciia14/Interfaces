@@ -1,0 +1,26 @@
+{
+    "usuarios": [
+      {
+        "id": 1,
+        "nombre": "Lucía Navarro",
+        "email": "lucia@gmail.com",
+        "contraseña": "123456789",
+        "telefono": "622 622 622"
+      },
+      {
+        "id": 2,
+        "nombre": "Belén Pérez",
+        "email": "belen@gmail.com",
+        "contraseña": "123456789",
+        "telefono": "611 611 611"
+      },
+      {
+        "id": 3,
+        "nombre": "Andrea López",
+        "email": "andrea@gmail.com",
+        "contraseña": "123456789",
+        "telefono": "600 600 600"
+      }
+    ]
+  }
+  
