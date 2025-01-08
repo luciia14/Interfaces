@@ -21,3 +21,4 @@ flutter:
     - assets/logo_app.png
     - assets/usuario.png
     - assets/persona.jpg
+    - assets/usuarios.json
