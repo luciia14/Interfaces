@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
-import 'products_lists_view.dart';
-import 'user.dart';
-import 'dart:convert';  // Para convertir a JSON
+import 'products_lists_view.dart';  
+import 'autenticacion.dart'; 
 
-class LoginView extends StatelessWidget {
+
+
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),  // Gris claro
+      backgroundColor: const Color(0xFFF5F5F5), // Gris claro
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(32.0),
@@ -28,7 +37,7 @@ class LoginView extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF003366),  // Azul marino
+                  color: const Color(0xFF003366), // Azul marino
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -41,6 +50,7 @@ class LoginView extends StatelessWidget {
 
               // Campo de texto para Email
               TextField(
+                controller: _emailController, // Conecta el controlador
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -58,6 +68,7 @@ class LoginView extends StatelessWidget {
 
               // Campo de texto para Contraseña
               TextField(
+                controller: _passwordController, // Conecta el controlador
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -77,14 +88,28 @@ class LoginView extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MainLayout()),
-                    );
+                  onPressed: () async {
+                    final String email = _emailController.text; // Obtén el email del controlador
+                    final String contrasena = _passwordController.text; // Obtén la contraseña del controlador
+
+                    final bool esValido = await verificarInicioSesion(email, contrasena); // Llama a la función
+
+                    if (esValido) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Inicio de sesión exitoso')),
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MainLayout()), // Redirige a la pantalla principal
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Email o contraseña incorrectos')),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 209, 50, 26),  // Rojo brillante
+                    backgroundColor: const Color.fromARGB(255, 209, 50, 26), // Rojo brillante
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -97,7 +122,6 @@ class LoginView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-
               // Enlace para registrarse
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
