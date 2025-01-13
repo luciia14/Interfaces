@@ -3,9 +3,9 @@ import 'profile_page.dart';
 import 'coches.dart';
 import 'hoteles.dart';
 import 'vuelos.dart';
-// Widget principal que contiene la barra lateral y superior constante
+
 class MainLayout extends StatefulWidget {
-  final Map<String, dynamic> usuario; // Parámetro para los datos del usuario
+  final Map<String, dynamic> usuario;
 
   const MainLayout({Key? key, required this.usuario}) : super(key: key);
 
@@ -21,10 +21,18 @@ class _MainLayoutState extends State<MainLayout> {
   void initState() {
     super.initState();
     _pages = [
-      HomePage(onItemSelected: (index) => setState(() => _selectedIndex = index)),
-      const SearchPage(option: 'Vuelo'),
-      const SearchPage(option: 'Hotel'), 
+    HomePage(onItemSelected: (index) => setState(() => _selectedIndex = index)),
+    ProfilePage(usuario: widget.usuario),
+    const SearchCarsPage(),
+    SearchFlightsPage(usuario: widget.usuario),  // Pasamos widget.usuario aquí
+    const SearchHotelsPage(),
     ];
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -33,14 +41,12 @@ class _MainLayoutState extends State<MainLayout> {
       backgroundColor: const Color(0xFFF5F5F5),
       body: Row(
         children: [
-          // Barra lateral fija
           Container(
             width: 250,
             color: Colors.blueGrey[50],
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Sección de perfil
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -48,8 +54,7 @@ class _MainLayoutState extends State<MainLayout> {
                     children: [
                       const CircleAvatar(
                         radius: 40,
-                        backgroundImage:
-                            AssetImage('assets/persona.jpg'),
+                        backgroundImage: AssetImage('assets/persona.jpg'),
                       ),
                       const SizedBox(height: 13),
                       Text(
@@ -61,9 +66,9 @@ class _MainLayoutState extends State<MainLayout> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                       Text(
-                         widget.usuario['email'],
-                        style: TextStyle(
+                      Text(
+                        widget.usuario['email'],
+                        style: const TextStyle(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
@@ -72,34 +77,37 @@ class _MainLayoutState extends State<MainLayout> {
                   ),
                 ),
                 const Divider(),
-
-                // Menú de navegación
                 ListTile(
                   leading: const Icon(Icons.home, color: Colors.blueGrey),
                   title: const Text('Inicio'),
-                  onTap: () => setState(() => _selectedIndex = 0),
+                  onTap: () => _onItemTapped(0),
                 ),
-                 ListTile(
+                ListTile(
                   leading: const Icon(Icons.person, color: Colors.blueGrey),
                   title: const Text('Perfil'),
-                  onTap: () {
-                   Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                       builder: (context) => ProfilePage(usuario: widget.usuario), // Pasa los datos del usuario
-                    ),
-                  );
-               },
-              ),
+                  onTap: () => _onItemTapped(1),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.directions_car, color: Colors.blueGrey),
+                  title: const Text('Coches'),
+                  onTap: () => _onItemTapped(2),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.flight, color: Colors.blueGrey),
+                  title: const Text('Vuelos'),
+                  onTap: () => _onItemTapped(3),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.hotel, color: Colors.blueGrey),
+                  title: const Text('Hoteles'),
+                  onTap: () => _onItemTapped(4),
+                ),
               ],
             ),
           ),
-
-          // Contenido principal
           Expanded(
             child: Column(
               children: [
-                // Barra superior fija con logo
                 Container(
                   width: double.infinity,
                   color: const Color.fromARGB(255, 235, 180, 0),
@@ -122,7 +130,6 @@ class _MainLayoutState extends State<MainLayout> {
                     ],
                   ),
                 ),
-                // Página seleccionada
                 Expanded(
                   child: IndexedStack(
                     index: _selectedIndex,
@@ -138,7 +145,6 @@ class _MainLayoutState extends State<MainLayout> {
   }
 }
 
-// Página de inicio
 class HomePage extends StatelessWidget {
   final Function(int) onItemSelected;
   const HomePage({super.key, required this.onItemSelected});
@@ -157,84 +163,22 @@ class HomePage extends StatelessWidget {
               fontWeight: FontWeight.bold,
               color: Colors.blueGrey[800],
             ),
-            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          // Opción de Coche
           ListTile(
-            leading: const Icon(Icons.directions_car, color: Colors.blueGrey),
+            leading: const Icon(Icons.directions_car),
             title: const Text('Buscar Coches'),
-            onTap: () {
-             Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const SearchCarsPage()),
-              );
-            },
+            onTap: () => onItemSelected(2),
           ),
-          // Opción de Vuelo
           ListTile(
-            leading: const Icon(Icons.flight, color: Colors.blueGrey),
+            leading: const Icon(Icons.flight),
             title: const Text('Vuelos'),
-            onTap: () {
-              Navigator.push(
-                context,
-               MaterialPageRoute(
-                builder: (context) => const SearchFlightsPage(),
-              ),
-           );
-        },
-      ),
-          // Opción de Hotel
+            onTap: () => onItemSelected(3),
+          ),
           ListTile(
-            leading: const Icon(Icons.hotel, color: Colors.blueGrey),
+            leading: const Icon(Icons.hotel),
             title: const Text('Hoteles'),
-            onTap: () {
-             Navigator.push(
-               context,
-              MaterialPageRoute(
-              builder: (context) => const SearchHotelsPage(),
-                  ),
-               );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SearchPage extends StatelessWidget {
-  final String option;
-  const SearchPage({Key? key, required this.option}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          // Barra de búsqueda
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Buscar $option',
-              prefixIcon: const Icon(Icons.search),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-          // Aquí puedes agregar contenido adicional según la búsqueda
-          Expanded(
-            child: Center(
-              child: Text(
-                'Resultados de búsqueda para $option',
-                style: TextStyle(fontSize: 18, color: Colors.blueGrey[600]),
-              ),
-            ),
+            onTap: () => onItemSelected(4),
           ),
         ],
       ),
