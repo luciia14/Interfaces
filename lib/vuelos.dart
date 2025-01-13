@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'products_lists_view.dart';
+
 
 class SearchFlightsPage extends StatefulWidget {
-  const SearchFlightsPage({Key? key}) : super(key: key);
+  final Map<String, dynamic> usuario;
+  const SearchFlightsPage({Key? key, required this.usuario}) : super(key: key);
 
   @override
   _SearchFlightsPageState createState() => _SearchFlightsPageState();
@@ -57,7 +60,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
     return [];
   }
 
-  void _confirmarReserva() {
+  void _confirmarReserva(BuildContext context, Map<String, dynamic> usuario) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -82,7 +85,13 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Reserva realizada con éxito')),
               );
-              Navigator.pop(context); // Redirige a la pantalla anterior (inicio)
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MainLayout(usuario: usuario),
+                ),
+                (route) => false,
+              );
             },
             child: const Text('Aceptar'),
           ),
@@ -98,13 +107,12 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
         title: Text(_idaSeleccionada
             ? 'Seleccionar vuelo de vuelta'
             : 'Seleccionar vuelo de ida'),
-        backgroundColor: const Color.fromARGB(255, 235, 180, 0), // Amarillo
+        backgroundColor: const Color.fromARGB(255, 235, 180, 0),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Campo de salida
             TextField(
               controller: _departureController,
               decoration: InputDecoration(
@@ -119,7 +127,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
               ),
             ),
             const SizedBox(height: 10),
-            // Campo de destino
             TextField(
               controller: _destinationController,
               decoration: InputDecoration(
@@ -136,15 +143,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 setState(() {});
               },
             ),
-            const SizedBox(height: 10),
-            Text(
-              _idaSeleccionada
-                  ? 'Seleccionar vuelo de vuelta'
-                  : 'Seleccionar vuelo de ida',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
             const SizedBox(height: 20),
-            // Lista de vuelos de ida o vuelta
             Expanded(
               child: Builder(
                 builder: (context) {
@@ -183,7 +182,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                               setState(() {
                                 _vueloVueltaSeleccionado = vuelo;
                               });
-                              _confirmarReserva();
+                              _confirmarReserva(context, widget.usuario);
                             }
                           },
                         ),
@@ -199,3 +198,5 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
     );
   }
 }
+
+
