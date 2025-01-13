@@ -24,3 +24,16 @@ Future<bool> verificarInicioSesion(String email, String contrasena) async {
   }
   return false; // Usuario no encontrado
 }
+// Función para obtener el usuario completo por email
+Future<Map<String, dynamic>?> obtenerUsuarioPorEmail(String email) async {
+  // Cargar usuarios desde el archivo JSON
+  final List<Map<String, dynamic>> usuarios = await cargarUsuarios();
+
+  // Buscar un usuario que coincida con el email
+  for (final usuario in usuarios) {
+    if (usuario['email'] == email) {
+      return usuario; // Devuelve el usuario completo si coincide
+    }
+  }
+  return null; // Devuelve null si no se encuentra el usuario
+}

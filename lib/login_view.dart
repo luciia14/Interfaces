@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'products_lists_view.dart';  
 import 'autenticacion.dart'; 
 
-
-
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -94,20 +92,32 @@ class _LoginViewState extends State<LoginView> {
 
                     final bool esValido = await verificarInicioSesion(email, contrasena); // Llama a la función
 
-                    if (esValido) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Inicio de sesión exitoso')),
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const MainLayout()), // Redirige a la pantalla principal
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Email o contraseña incorrectos')),
-                      );
-                    }
-                  },
+                   if (esValido) {
+        // Si el inicio de sesión es válido, obtenemos los datos del usuario
+        final Map<String, dynamic>? usuario = await obtenerUsuarioPorEmail(email);
+
+        if (usuario != null) {
+          // Almacenar o utilizar los datos del usuario
+          print('Usuario logueado: ${usuario['nombre']} - ${usuario['email']}');
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Inicio de sesión exitoso')),
+          );
+
+          // Redirige a la pantalla principal y pasa los datos del usuario
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MainLayout(usuario: usuario), // Pasa los datos del usuario
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Email o contraseña incorrectos')),
+        );
+      }
+    },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 209, 50, 26), // Rojo brillante
                     padding: const EdgeInsets.symmetric(vertical: 16),
