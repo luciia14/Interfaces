@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'products_lists_view.dart'; // Asegúrate de tener esta importación si la necesitas
 
 class SearchCarsPage extends StatefulWidget {
-  const SearchCarsPage({Key? key}) : super(key: key);
+  final Map<String, dynamic> usuario;
+  const SearchCarsPage({Key? key, required this.usuario}) : super(key: key);
 
   @override
   _SearchCarsPageState createState() => _SearchCarsPageState();
@@ -67,7 +69,15 @@ class _SearchCarsPageState extends State<SearchCarsPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Reserva realizada con éxito')),
               );
-              Navigator.pop(context);
+
+              // Navegar a MainLayout después de confirmar la reserva
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MainLayout(usuario: widget.usuario),
+                ),
+                (route) => false, // Elimina las rutas anteriores
+              );
             },
             child: const Text('Confirmar'),
           ),
@@ -79,114 +89,147 @@ class _SearchCarsPageState extends State<SearchCarsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Buscar Coches'),
-        backgroundColor: const Color.fromARGB(255, 235, 180, 0), // Amarillo
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Buscar destino',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Cabecera sin flecha, solo el título
+                const Text(
+                  'Buscar Coches',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              onChanged: _filterCars,
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: filteredCars.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: filteredCars.length,
-                      itemBuilder: (context, index) {
-                        final car = filteredCars[index];
-                        final isFavorite = favoriteCars.contains(car['name']);
+                const SizedBox(height: 20),
 
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 12.0),
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/${car['name']}.png',
-                                  height: 120,
-                                  width: 150,
-                                  fit: BoxFit.cover,
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        car['name']!,
-                                        style: const TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        '${car['price']} - ${car['seats']} plazas',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.blueGrey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Column(
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    labelText: 'Buscar destino',
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onChanged: _filterCars,
+                ),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: filteredCars.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: filteredCars.length,
+                          itemBuilder: (context, index) {
+                            final car = filteredCars[index];
+                            final isFavorite = favoriteCars.contains(car['name']);
+
+                            return Card(
+                              margin: const EdgeInsets.symmetric(vertical: 12.0),
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
                                   children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        isFavorite
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: isFavorite ? Colors.red : Colors.grey,
-                                      ),
-                                      onPressed: () => _toggleFavorite(car['name']!),
+                                    Image.asset(
+                                      'assets/${car['name']}.png',
+                                      height: 120,
+                                      width: 150,
+                                      fit: BoxFit.cover,
                                     ),
-                                    ElevatedButton(
-                                      onPressed: () => _reserveCar(car['name']!),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            car['name']!,
+                                            style: const TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            '${car['price']} - ${car['seats']} plazas',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.blueGrey,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      child: const Text('Reservar'),
+                                    ),
+                                    Column(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(
+                                            isFavorite
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: isFavorite ? Colors.red : Colors.grey,
+                                          ),
+                                          onPressed: () => _toggleFavorite(car['name']!),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () => _reserveCar(car['name']!),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.green,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text('Reservar'),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            );
+                          },
+                        )
+                      : const Center(
+                          child: Text(
+                            'No se encontraron coches para este destino.',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
                           ),
-                        );
-                      },
-                    )
-                  : const Center(
-                      child: Text(
-                        'No se encontraron coches para este destino.',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    ),
+                        ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          // La flecha en la esquina izquierda
+          Positioned(
+            top: 30, // Ajusta la posición vertical
+            left: 10, // Ajusta la posición horizontal
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                size: 40.0,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MainLayout(usuario: widget.usuario),
+                  ),
+                  (route) => false, // Elimina las rutas anteriores
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
