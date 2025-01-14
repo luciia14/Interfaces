@@ -133,28 +133,44 @@ class _LoginViewState extends State<LoginView> {
               ),
               const SizedBox(height: 16),
               // Enlace para registrarse
-              Row(
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    '¿No tienes cuenta?',
-                    style: TextStyle(color: Colors.grey),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        '¿No tienes cuenta?',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Acción para redirigir al formulario de registro
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const RegisterView()),
+                          );
+                        },
+                        child: const Text(
+                          'Regístrate aquí',
+                          style: TextStyle(color: Color(0xFF003366)),  // Azul marino
+                        ),
+                      ),
+                    ],
                   ),
-                  TextButton(
-                    onPressed: () {
-                      // Acción para redirigir al formulario de registro
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const RegisterView()),
-                      );
-                    },
-                    child: const Text(
-                      'Regístrate aquí',
-                      style: TextStyle(color: Color(0xFF003366)),  // Azul marino
+                  const SizedBox(height: 16), // Espacio entre el Row y el texto
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.0), // Espacio lateral
+                    child: Text(
+                      'Al iniciar sesión o al crear una cuenta, aceptas nuestros Términos y condiciones y la Política de privacidad',
+                      style: TextStyle(color: Colors.grey),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ],
-              ),
+              )
+
             ],
           ),
         ),
@@ -334,19 +350,34 @@ class _RegisterViewState extends State<RegisterView> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Botón para Volver al inicio de sesión
+              
+              // Botón para Volver al inicio de sesión con texto centrado debajo
               Center(
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Vuelve a la pantalla de login
-                  },
-                  child: const Text(
-                    '¿Ya tienes una cuenta? Inicia sesión',
-                    style: TextStyle(color: Color(0xFF003366)), // Azul marino
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // Centra verticalmente
+                  crossAxisAlignment: CrossAxisAlignment.center, // Centra horizontalmente
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context); // Vuelve a la pantalla de login
+                      },
+                      child: const Text(
+                        '¿Ya tienes una cuenta? Inicia sesión',
+                        style: TextStyle(color: Color(0xFF003366)), // Azul marino
+                      ),
+                    ),
+                    const SizedBox(height: 16), // Espacio entre el botón y el texto
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.0), // Espacio lateral
+                      child: Text(
+                        'Al iniciar sesión o al crear una cuenta, aceptas nuestros Términos y condiciones y la Política de privacidad',
+                        style: TextStyle(color: Colors.grey),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+              )
             ],
           ),
         ),
