@@ -1,0 +1,379 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+class SearchCarsPage extends StatefulWidget {
+  const SearchCarsPage({Key? key}) : super(key: key);
+
+  @override
+  _SearchCarsPageState createState() => _SearchCarsPageState();
+}
+
+class _SearchCarsPageState extends State<SearchCarsPage> {
+  final TextEditingController _searchController = TextEditingController();
+  DateTime _pickupDate = DateTime.now();
+  DateTime _returnDate = DateTime.now().add(const Duration(days: 1));
+  TimeOfDay _pickupTime = const TimeOfDay(hour: 10, minute: 0);
+  TimeOfDay _returnTime = const TimeOfDay(hour: 10, minute: 0);
+  bool _returnToDifferentOffice = false;
+  bool _ageRange25To70 = true;
+
+  final Map<String, List<Map<String, String>>> carsByDestination = {
+    'París': [
+      {'name': 'Renault Clio', 'price': '45€/día', 'seats': '4'},
+      {'name': 'Peugeot 208', 'price': '50€/día', 'seats': '5'},
+      {'name': 'Citroen C3', 'price': '48€/día', 'seats': '4'},
+    ],
+    'Londres': [
+      {'name': 'Ford Fiesta', 'price': '40€/día', 'seats': '4'},
+      {'name': 'BMW Serie 1', 'price': '90€/día', 'seats': '5'},
+      {'name': 'Mini Cooper', 'price': '70€/día', 'seats': '4'},
+      {'name': 'Audi A3', 'price': '85€/día', 'seats': '5'},
+    ],
+  };
+
+  List<Map<String, String>> filteredCars = [];
+  final Set<String> favoriteCars = {};
+
+  void _filterCars(String query) {
+    setState(() {
+      if (carsByDestination.containsKey(query)) {
+        filteredCars = carsByDestination[query]!;
+      } else {
+        filteredCars = [];
+      }
+    });
+  }
+
+  void _toggleFavorite(String carName) {
+    setState(() {
+      if (favoriteCars.contains(carName)) {
+        favoriteCars.remove(carName);
+      } else {
+        favoriteCars.add(carName);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('$carName se ha añadido a favoritos')),
+        );
+      }
+    });
+  }
+
+  void _reserveCar(String carName) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmación de reserva'),
+        content: Text('¿Quieres reservar el coche $carName?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Reserva realizada con éxito')),
+              );
+              Navigator.pop(context);
+            },
+            child: const Text('Confirmar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _selectDate(BuildContext context, bool isPickup) async {
+    DateTime initialDate = isPickup ? _pickupDate : _returnDate;
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (picked != null && picked != initialDate) {
+      setState(() {
+        if (isPickup) {
+          _pickupDate = picked;
+        } else {
+          _returnDate = picked;
+        }
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context, bool isPickup) async {
+    TimeOfDay initialTime = isPickup ? _pickupTime : _returnTime;
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+    if (picked != null && picked != initialTime) {
+      setState(() {
+        if (isPickup) {
+          _pickupTime = picked;
+        } else {
+          _returnTime = picked;
+        }
+      });
+    }
+  }
+
+  String _formatDateTime(DateTime date, TimeOfDay time) {
+    final DateFormat dateFormat = DateFormat('dd/MM/yy');
+    final String formattedTime = time.format(context);
+    return '${dateFormat.format(date)} $formattedTime';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Buscar Coches'),
+        backgroundColor: const Color.fromARGB(255, 235, 180, 0), // Amarillo
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Buscar destino',
+                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              onChanged: _filterCars,
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Fecha de recogida:'),
+                      GestureDetector(
+                        onTap: () => _selectDate(context, true),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child:
+                              Text(_formatDateTime(_pickupDate, _pickupTime)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Hora de recogida:'),
+                      GestureDetector(
+                        onTap: () => _selectTime(context, true),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child: Text(_pickupTime.format(context)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Fecha de devolución:'),
+                      GestureDetector(
+                        onTap: () => _selectDate(context, false),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child:
+                              Text(_formatDateTime(_returnDate, _returnTime)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Hora de devolución:'),
+                      GestureDetector(
+                        onTap: () => _selectTime(context, false),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child: Text(_returnTime.format(context)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Checkbox(
+                  value: _returnToDifferentOffice,
+                  onChanged: (value) {
+                    setState(() {
+                      _returnToDifferentOffice = value!;
+                    });
+                  },
+                ),
+                const Expanded(
+                  child: Text('Devolver el vehículo en una oficina diferente'),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Checkbox(
+                  value: _ageRange25To70,
+                  onChanged: (value) {
+                    setState(() {
+                      _ageRange25To70 = value!;
+                    });
+                  },
+                ),
+                const Expanded(
+                  child:
+                      Text('Conductor con una edad comprendida entre 25 y 70'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: filteredCars.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: filteredCars.length,
+                      itemBuilder: (context, index) {
+                        final car = filteredCars[index];
+                        final isFavorite = favoriteCars.contains(car['name']);
+
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 12.0),
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  'assets/${car['name']}.png',
+                                  height: 120,
+                                  width: 150,
+                                  fit: BoxFit.cover,
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        car['name']!,
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        '${car['price']} - ${car['seats']} plazas',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.blueGrey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Column(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        isFavorite
+                                            ? Icons.favorite
+                                            : Icons.favorite_border,
+                                        color: isFavorite
+                                            ? Colors.red
+                                            : Colors.grey,
+                                      ),
+                                      onPressed: () =>
+                                          _toggleFavorite(car['name']!),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () =>
+                                          _reserveCar(car['name']!),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.green,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: const Text('Reservar'),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                  : const Center(
+                      child: Text(
+                        'No se encontraron coches para este destino.',
+                        style: TextStyle(fontSize: 18, color: Colors.grey),
+                      ),
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
