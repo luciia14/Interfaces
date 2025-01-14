@@ -107,7 +107,7 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
         title: Text(_idaSeleccionada
             ? 'Seleccionar vuelo de vuelta'
             : 'Seleccionar vuelo de ida'),
-        backgroundColor: const Color.fromARGB(255, 235, 180, 0),
+        backgroundColor: const Color.fromARGB(255, 86, 0, 235),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -198,5 +198,4 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
     );
   }
 }
-
 
