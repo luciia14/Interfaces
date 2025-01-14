@@ -11,10 +11,10 @@ class SearchCarsPage extends StatefulWidget {
 
 class _SearchCarsPageState extends State<SearchCarsPage> {
   final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _peopleController = TextEditingController();
-
-  DateTime? _pickupDate;
-  DateTime? _returnDate;
+  DateTime? _checkInDate;
+  DateTime? _checkOutDate;
+  int _seats = 1;
+  bool isSearchEnabled = false;
 
   final Map<String, List<Map<String, String>>> carsByDestination = {
     'París': [
@@ -32,57 +32,32 @@ class _SearchCarsPageState extends State<SearchCarsPage> {
 
   List<Map<String, String>> filteredCars = [];
   final Set<String> favoriteCars = {};
-  bool _searchPerformed = false;
 
-  bool get isSearchEnabled {
-    return _searchController.text.isNotEmpty &&
-           _peopleController.text.isNotEmpty &&
-           int.tryParse(_peopleController.text) != null &&
-           int.parse(_peopleController.text) <= 5 &&
-           _pickupDate != null &&
-           _returnDate != null &&
-           _pickupDate!.isBefore(_returnDate!);
-  }
-
-  void _filterCars() {
+  void _filterCars(String query) {
     setState(() {
-      final query = _searchController.text.trim();
       if (carsByDestination.containsKey(query)) {
         filteredCars = carsByDestination[query]!;
       } else {
         filteredCars = [];
       }
-      _searchPerformed = true;
     });
   }
 
-  Future<void> _selectPickupDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
+  Future<void> _selectDate(BuildContext context, bool isCheckIn) async {
+    final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      lastDate: DateTime(2101),
     );
-    if (pickedDate != null) {
+    if (picked != null) {
       setState(() {
-        _pickupDate = pickedDate;
-        if (_returnDate != null && _returnDate!.isBefore(_pickupDate!)) {
-          _returnDate = null;
+        if (isCheckIn) {
+          _checkInDate = picked;
+        } else {
+          _checkOutDate = picked;
         }
-      });
-    }
-  }
-
-  Future<void> _selectReturnDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _pickupDate ?? DateTime.now(),
-      firstDate: _pickupDate ?? DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-    if (pickedDate != null) {
-      setState(() {
-        _returnDate = pickedDate;
+        isSearchEnabled = _checkInDate != null && _checkOutDate != null && _searchController.text.isNotEmpty;
       });
     }
   }
@@ -100,156 +75,190 @@ class _SearchCarsPageState extends State<SearchCarsPage> {
     });
   }
 
-  void _reserveCar(String carName) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmación de reserva'),
-        content: Text('¿Quieres reservar el coche $carName?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
+  @override
+ Widget build(BuildContext context) {
+  return Scaffold(
+    body: Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 40),  // Espacio para la flecha
+
+              const Text(
+                'Buscar Coches',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+
+              Row(
+                children: [
+                  // Campo de búsqueda para el destino
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Destino',
+                        prefixIcon: const Icon(Icons.search),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          isSearchEnabled = _checkInDate != null && _checkOutDate != null && value.isNotEmpty;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8), // Espacio entre los elementos
+                  // Icono para la fecha de entrada
+                  IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () => _selectDate(context, true), // Fecha de entrada
+                  ),
+                  const SizedBox(width: 8), // Espacio entre los elementos
+                  // Mostrar la fecha de entrada
+                  Text(
+                    _checkInDate == null ? 'Fecha Entrada' : '${_checkInDate!.day}/${_checkInDate!.month}/${_checkInDate!.year}',
+                    style: const TextStyle(fontSize: 16, color: Colors.blueGrey),
+                  ),
+                  const SizedBox(width: 8), // Espacio entre las fechas
+                  // Icono para la fecha de salida
+                  IconButton(
+                    icon: const Icon(Icons.calendar_today_outlined),
+                    onPressed: () => _selectDate(context, false), // Fecha de salida
+                  ),
+                  const SizedBox(width: 8), // Espacio entre los elementos
+                  // Mostrar la fecha de salida
+                  Text(
+                    _checkOutDate == null ? 'Fecha Salida' : '${_checkOutDate!.day}/${_checkOutDate!.month}/${_checkOutDate!.year}',
+                    style: const TextStyle(fontSize: 16, color: Colors.blueGrey),
+                  ),
+                  const SizedBox(width: 8), // Espacio entre los elementos
+                  // Botón de búsqueda
+                  ElevatedButton(
+                    onPressed: isSearchEnabled ? () => _filterCars(_searchController.text) : null,
+                    child: const Text('Buscar'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20), // Espacio entre la barra de búsqueda y la lista de coches
+
+              // Lista de coches
+              Expanded(
+                child: ListView.builder(
+                  itemCount: filteredCars.length,
+                  itemBuilder: (context, index) {
+                    final car = filteredCars[index];
+                    final isFavorite = favoriteCars.contains(car['name']);
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 12.0),
+                      elevation: 12,  // Aumentamos la sombra de la tarjeta para más destacada
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),  // Borde más redondeado
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            // Imagen del coche más grande
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(15),  // Borde redondeado de la imagen
+                              child: Image.asset(
+                                'assets/${car['name']}.png',
+                                height: 180, // Aumentamos el tamaño de la imagen
+                                width: 220,  // Aumentamos el tamaño de la imagen
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            const SizedBox(width: 20),  // Espacio entre la imagen y los textos
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    car['name']!,
+                                    style: const TextStyle(
+                                      fontSize: 26,  // Aumentamos el tamaño del texto
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    '${car['price']} - ${car['seats']} plazas',
+                                    style: const TextStyle(
+                                      fontSize: 18,  // Tamaño de texto más grande
+                                      color: Colors.blueGrey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                // Corazón para favoritos
+                                IconButton(
+                                  icon: Icon(
+                                    isFavorite
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: isFavorite ? Colors.red : Colors.grey,
+                                  ),
+                                  onPressed: () => _toggleFavorite(car['name']!),
+                                ),
+                                // Botón de reservar al lado del corazón
+                                ElevatedButton(
+                                  onPressed: null,  // No hace nada por ahora
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: const Text('Reservar'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-          ElevatedButton(
+        ),
+
+        // Aquí está el Positioned que coloca la flecha en la esquina superior izquierda
+        Positioned(
+          top: 20, // Ajusta la posición vertical para que quede en la parte superior
+          left: 10, // Ajusta la posición horizontal para que quede en el borde izquierdo
+          child: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              size: 40.0,
+              color: Colors.black,
+            ),
             onPressed: () {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Reserva realizada con éxito')),
-              );
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
                   builder: (context) => MainLayout(usuario: widget.usuario),
                 ),
-                (route) => false,
+                (route) => false, // Elimina las rutas anteriores
               );
             },
-            child: const Text('Confirmar'),
           ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                const Text(
-                  'Buscar Coches',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 20),
-
-                TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    labelText: 'Buscar destino',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  onChanged: (_) => setState(() {}),
-                ),
-                const SizedBox(height: 20),
-
-                TextField(
-                  controller: _peopleController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Número de personas (máx. 5)',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  onChanged: (_) => setState(() {}),
-                ),
-                const SizedBox(height: 20),
-
-                ElevatedButton.icon(
-                  onPressed: () => _selectPickupDate(context),
-                  icon: const Icon(Icons.calendar_today),
-                  label: Text(_pickupDate == null
-                      ? 'Seleccionar fecha de recogida'
-                      : 'Recogida: ${_pickupDate!.day}/${_pickupDate!.month}/${_pickupDate!.year}'),
-                ),
-                const SizedBox(height: 10),
-
-                ElevatedButton.icon(
-                  onPressed: () => _selectReturnDate(context),
-                  icon: const Icon(Icons.calendar_today),
-                  label: Text(_returnDate == null
-                      ? 'Seleccionar fecha de devolución'
-                      : 'Devolución: ${_returnDate!.day}/${_returnDate!.month}/${_returnDate!.year}'),
-                ),
-                const SizedBox(height: 20),
-
-                ElevatedButton(
-                  onPressed: isSearchEnabled ? _filterCars : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isSearchEnabled ? Colors.blue : Colors.grey,
-                  ),
-                  child: const Text('Buscar Coches'),
-                ),
-                const SizedBox(height: 20),
-
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: filteredCars.length,
-                    itemBuilder: (context, index) {
-                      final car = filteredCars[index];
-                      final isFavorite = favoriteCars.contains(car['name']);
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 12.0),
-                        child: ListTile(
-                          leading: Image.asset(
-                            'assets/${car['name']}.png',
-                            width: 100,
-                            fit: BoxFit.cover,
-                          ),
-                          title: Text(car['name']!),
-                          subtitle: Text('${car['price']} - ${car['seats']} plazas'),
-                          trailing: IconButton(
-                            icon: Icon(
-                              isFavorite ? Icons.favorite : Icons.favorite_border,
-                              color: isFavorite ? Colors.red : Colors.grey,
-                            ),
-                            onPressed: () => _toggleFavorite(car['name']!),
-                          ),
-                          onTap: () => _reserveCar(car['name']!),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 30, // Ajusta la posición vertical
-            left: 10, // Ajusta la posición horizontal
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                size: 40.0,
-                color: Colors.black,
-              ),
-              onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MainLayout(usuario: widget.usuario),
-                  ),
-                  (route) => false, // Elimina las rutas anteriores
-                );
-              }, // Redirige al Home
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }
