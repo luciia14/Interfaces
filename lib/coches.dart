@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'products_lists_view.dart'; // Asegúrate de tener esta importación si la necesitas
+import 'products_lists_view.dart';
 
 class SearchCarsPage extends StatefulWidget {
   final Map<String, dynamic> usuario;
@@ -11,6 +11,10 @@ class SearchCarsPage extends StatefulWidget {
 
 class _SearchCarsPageState extends State<SearchCarsPage> {
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _peopleController = TextEditingController();
+
+  DateTime? _pickupDate;
+  DateTime? _returnDate;
 
   final Map<String, List<Map<String, String>>> carsByDestination = {
     'París': [
@@ -28,15 +32,59 @@ class _SearchCarsPageState extends State<SearchCarsPage> {
 
   List<Map<String, String>> filteredCars = [];
   final Set<String> favoriteCars = {};
+  bool _searchPerformed = false;
 
-  void _filterCars(String query) {
+  bool get isSearchEnabled {
+    return _searchController.text.isNotEmpty &&
+           _peopleController.text.isNotEmpty &&
+           int.tryParse(_peopleController.text) != null &&
+           int.parse(_peopleController.text) <= 5 &&
+           _pickupDate != null &&
+           _returnDate != null &&
+           _pickupDate!.isBefore(_returnDate!);
+  }
+
+  void _filterCars() {
     setState(() {
+      final query = _searchController.text.trim();
       if (carsByDestination.containsKey(query)) {
         filteredCars = carsByDestination[query]!;
       } else {
         filteredCars = [];
       }
+      _searchPerformed = true;
     });
+  }
+
+  Future<void> _selectPickupDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        _pickupDate = pickedDate;
+        if (_returnDate != null && _returnDate!.isBefore(_pickupDate!)) {
+          _returnDate = null;
+        }
+      });
+    }
+  }
+
+  Future<void> _selectReturnDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _pickupDate ?? DateTime.now(),
+      firstDate: _pickupDate ?? DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        _returnDate = pickedDate;
+      });
+    }
   }
 
   void _toggleFavorite(String carName) {
@@ -69,14 +117,12 @@ class _SearchCarsPageState extends State<SearchCarsPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Reserva realizada con éxito')),
               );
-
-              // Navegar a MainLayout después de confirmar la reserva
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
                   builder: (context) => MainLayout(usuario: widget.usuario),
                 ),
-                (route) => false, // Elimina las rutas anteriores
+                (route) => false,
               );
             },
             child: const Text('Confirmar'),
@@ -95,14 +141,9 @@ class _SearchCarsPageState extends State<SearchCarsPage> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                // Cabecera sin flecha, solo el título
                 const Text(
                   'Buscar Coches',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
 
@@ -111,104 +152,82 @@ class _SearchCarsPageState extends State<SearchCarsPage> {
                   decoration: InputDecoration(
                     labelText: 'Buscar destino',
                     prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   ),
-                  onChanged: _filterCars,
+                  onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: 20),
-                Expanded(
-                  child: filteredCars.isNotEmpty
-                      ? ListView.builder(
-                          itemCount: filteredCars.length,
-                          itemBuilder: (context, index) {
-                            final car = filteredCars[index];
-                            final isFavorite = favoriteCars.contains(car['name']);
 
-                            return Card(
-                              margin: const EdgeInsets.symmetric(vertical: 12.0),
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/${car['name']}.png',
-                                      height: 120,
-                                      width: 150,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            car['name']!,
-                                            style: const TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            '${car['price']} - ${car['seats']} plazas',
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.blueGrey,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Column(
-                                      children: [
-                                        IconButton(
-                                          icon: Icon(
-                                            isFavorite
-                                                ? Icons.favorite
-                                                : Icons.favorite_border,
-                                            color: isFavorite ? Colors.red : Colors.grey,
-                                          ),
-                                          onPressed: () => _toggleFavorite(car['name']!),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () => _reserveCar(car['name']!),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.green,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          child: const Text('Reservar'),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        )
-                      : const Center(
-                          child: Text(
-                            'No se encontraron coches para este destino.',
-                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                TextField(
+                  controller: _peopleController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Número de personas (máx. 5)',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onChanged: (_) => setState(() {}),
+                ),
+                const SizedBox(height: 20),
+
+                ElevatedButton.icon(
+                  onPressed: () => _selectPickupDate(context),
+                  icon: const Icon(Icons.calendar_today),
+                  label: Text(_pickupDate == null
+                      ? 'Seleccionar fecha de recogida'
+                      : 'Recogida: ${_pickupDate!.day}/${_pickupDate!.month}/${_pickupDate!.year}'),
+                ),
+                const SizedBox(height: 10),
+
+                ElevatedButton.icon(
+                  onPressed: () => _selectReturnDate(context),
+                  icon: const Icon(Icons.calendar_today),
+                  label: Text(_returnDate == null
+                      ? 'Seleccionar fecha de devolución'
+                      : 'Devolución: ${_returnDate!.day}/${_returnDate!.month}/${_returnDate!.year}'),
+                ),
+                const SizedBox(height: 20),
+
+                ElevatedButton(
+                  onPressed: isSearchEnabled ? _filterCars : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isSearchEnabled ? Colors.blue : Colors.grey,
+                  ),
+                  child: const Text('Buscar Coches'),
+                ),
+                const SizedBox(height: 20),
+
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: filteredCars.length,
+                    itemBuilder: (context, index) {
+                      final car = filteredCars[index];
+                      final isFavorite = favoriteCars.contains(car['name']);
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 12.0),
+                        child: ListTile(
+                          leading: Image.asset(
+                            'assets/${car['name']}.png',
+                            width: 100,
+                            fit: BoxFit.cover,
                           ),
+                          title: Text(car['name']!),
+                          subtitle: Text('${car['price']} - ${car['seats']} plazas'),
+                          trailing: IconButton(
+                            icon: Icon(
+                              isFavorite ? Icons.favorite : Icons.favorite_border,
+                              color: isFavorite ? Colors.red : Colors.grey,
+                            ),
+                            onPressed: () => _toggleFavorite(car['name']!),
+                          ),
+                          onTap: () => _reserveCar(car['name']!),
                         ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
           ),
-
-          // La flecha en la esquina izquierda
           Positioned(
             top: 30, // Ajusta la posición vertical
             left: 10, // Ajusta la posición horizontal
@@ -226,7 +245,7 @@ class _SearchCarsPageState extends State<SearchCarsPage> {
                   ),
                   (route) => false, // Elimina las rutas anteriores
                 );
-              },
+              }, // Redirige al Home
             ),
           ),
         ],
