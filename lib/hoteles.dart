@@ -238,3 +238,4 @@ class _SearchHotelsPageState extends State<SearchHotelsPage> {
     );
   }
 }
+
