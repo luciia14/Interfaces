@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'products_lists_view.dart';
-
+import 'products_lists_view.dart'; // Asegúrate de tener esta importación si la necesitas
 
 class SearchFlightsPage extends StatefulWidget {
   final Map<String, dynamic> usuario;
@@ -101,101 +100,147 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_idaSeleccionada
-            ? 'Seleccionar vuelo de vuelta'
-            : 'Seleccionar vuelo de ida'),
-        backgroundColor: const Color.fromARGB(255, 86, 0, 235),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _departureController,
-              decoration: InputDecoration(
-                labelText: 'Ciudad de salida',
-                prefixIcon: const Icon(Icons.flight_takeoff),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 40), // Espacio para la flecha
+                const Text(
+                  'Buscar Vuelos',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _destinationController,
-              decoration: InputDecoration(
-                labelText: 'Ciudad de destino',
-                prefixIcon: const Icon(Icons.flight_land),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
+                const SizedBox(height: 20), // Espacio entre la cabecera y el campo de búsqueda
+
+                // Campo de Ciudad de Salida
+                TextField(
+                  controller: _departureController,
+                  decoration: InputDecoration(
+                    labelText: 'Ciudad de salida',
+                    prefixIcon: const Icon(Icons.flight_takeoff),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
                 ),
-              ),
-              onChanged: (value) {
-                setState(() {});
-              },
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: Builder(
-                builder: (context) {
-                  final vuelosFiltrados = getFilteredVuelos();
+                const SizedBox(height: 10),
 
-                  if (vuelosFiltrados.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'No se encontraron vuelos para este destino.',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    );
-                  }
+                // Campo de Ciudad de Destino
+                TextField(
+                  controller: _destinationController,
+                  decoration: InputDecoration(
+                    labelText: 'Ciudad de destino',
+                    prefixIcon: const Icon(Icons.flight_land),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                ),
+                const SizedBox(height: 20),
 
-                  return ListView.builder(
-                    itemCount: vuelosFiltrados.length,
-                    itemBuilder: (context, index) {
-                      final vuelo = vuelosFiltrados[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8.0),
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: ListTile(
-                          leading: const Icon(Icons.airplane_ticket),
-                          title: Text('Vuelo: ${vuelo['vuelo']}'),
-                          subtitle: Text('${vuelo['hora']} - ${vuelo['price']}'),
-                          onTap: () {
-                            if (!_idaSeleccionada) {
-                              setState(() {
-                                _idaSeleccionada = true;
-                                _vueloIdaSeleccionado = vuelo;
-                              });
-                            } else {
-                              setState(() {
-                                _vueloVueltaSeleccionado = vuelo;
-                              });
-                              _confirmarReserva(context, widget.usuario);
-                            }
-                          },
-                        ),
+                // Mostrar texto de selección de vuelo
+                if (_idaSeleccionada && _vueloIdaSeleccionado != null)
+                  const Text(
+                    'Selecciona vuelo de ida',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                if (!_idaSeleccionada)
+                  const Text(
+                    'Selecciona vuelo de vuelta',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+
+                Expanded(
+                  child: Builder(
+                    builder: (context) {
+                      final vuelosFiltrados = getFilteredVuelos();
+
+                      if (vuelosFiltrados.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            'No se encontraron vuelos para este destino.',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        itemCount: vuelosFiltrados.length,
+                        itemBuilder: (context, index) {
+                          final vuelo = vuelosFiltrados[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListTile(
+                              leading: const Icon(Icons.airplane_ticket),
+                              title: Text('Vuelo: ${vuelo['vuelo']}'),
+                              subtitle: Text('${vuelo['hora']} - ${vuelo['price']}'),
+                              onTap: () {
+                                if (!_idaSeleccionada) {
+                                  setState(() {
+                                    _idaSeleccionada = true;
+                                    _vueloIdaSeleccionado = vuelo;
+                                  });
+                                } else {
+                                  setState(() {
+                                    _vueloVueltaSeleccionado = vuelo;
+                                  });
+                                  _confirmarReserva(context, widget.usuario);
+                                }
+                              },
+                            ),
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          // La flecha en la esquina izquierda
+          Positioned(
+            top: 30, // Ajusta la posición vertical
+            left: 10, // Ajusta la posición horizontal
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                size: 40.0,
+                color: Colors.black,
+              ),
+             onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MainLayout(usuario: widget.usuario),
+                  ),
+                  (route) => false, // Elimina las rutas anteriores
+                );
+              }, // Redirige al Home
+            ),
+          ),
+        ],
       ),
     );
   }
 }
-
