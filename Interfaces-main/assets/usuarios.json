@@ -1,0 +1,94 @@
+{
+  "usuarios": [
+    {
+      "id": 1,
+      "nombre": "Lucía Navarro",
+      "email": "lucia@gmail.com",
+      "contraseña": "123456789",
+      "telefono": "622 622 622",
+      "puntos": "0",
+      "reservas": [],
+      "favoritos": [
+        {
+          "tipo": "hotel",
+          "detalle": "Hotel: Alicante Beach Resort - 2 noches",
+          "estado": "Favorito"
+        },
+        {
+          "tipo": "coche",
+          "detalle": "Coche: Renault Clio - 3 días",
+          "estado": "Favorito"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "nombre": "Belén Pérez",
+      "email": "belen@gmail.com",
+      "contraseña": "123456789",
+      "telefono": "611 611 611",
+      "puntos": "40",
+      "reservas": [
+        {
+          "tipo": "vuelo",
+          "detalle": "Vuelo ida: AL123 - Alicante a Londres - 6:00 - 120€",
+          "fecha": "2025-02-14",
+          "estado": "Confirmada"
+        },
+        {
+          "tipo": "vuelo",
+          "detalle": "Vuelo vuelta: VL456 - Londres a Alicante - 18:00 - 100€",
+          "fecha": "2025-02-20",
+          "estado": "Confirmada"
+        }
+      ],
+      "favoritos": [
+        {
+          "tipo": "hotel",
+          "detalle": "Hotel: London Grand Hotel - 5 noches",
+          "estado": "Favorito"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nombre": "Andrea López",
+      "email": "andrea@gmail.com",
+      "contraseña": "123456789",
+      "telefono": "600 600 600",
+      "puntos": "60",
+      "reservas": [
+        {
+          "tipo": "vuelo",
+          "detalle": "Vuelo ida: AP456 - Alicante a París - 9:00 - 140€",
+          "fecha": "2025-03-10",
+          "estado": "Confirmada"
+        },
+        {
+          "tipo": "vuelo",
+          "detalle": "Vuelo vuelta: VP789 - París a Alicante - 20:00 - 130€",
+          "fecha": "2025-03-17",
+          "estado": "Confirmada"
+        },
+        {
+          "tipo": "hotel",
+          "detalle": "Hotel: Paris Resort - 3 noches",
+          "fecha": "2025-03-15",
+          "estado": "Confirmada"
+        }
+      ],
+      "favoritos": [
+        {
+          "tipo": "hotel",
+          "detalle": "Hotel: Paris Resort - 3 noches",
+          "estado": "Favorito"
+        },
+        {
+          "tipo": "coche",
+          "detalle": "Coche: Peugeot 208 - 5 días",
+          "estado": "Favorito"
+        }
+      ]
+    }
+  ]
+}
