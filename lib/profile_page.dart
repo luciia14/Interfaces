@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'reservas.dart';
 import 'favoritos.dart';
+import 'products_lists_view.dart';
+
 class ProfilePage extends StatelessWidget {
   final Map<String, dynamic> usuario;
+  final void Function() navigateToReservations;
+  final void Function() navigateToFavorites;
 
-  const ProfilePage({Key? key, required this.usuario}) : super(key: key);
+  const ProfilePage({
+    Key? key,
+    required this.usuario,
+    required this.navigateToReservations,
+    required this.navigateToFavorites,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Perfil'),
-        backgroundColor: const Color.fromARGB(255, 235, 180, 0), // Color amarillo
+        backgroundColor: const Color.fromARGB(255, 235, 180, 0),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Avatar e información del usuario
             Row(
               children: [
                 const CircleAvatar(
@@ -30,16 +38,16 @@ class ProfilePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      usuario['nombre'], // Nombre dinámico
+                      usuario['nombre'],
                       style: const TextStyle(
-                        fontSize: 36, // Tamaño grande
+                        fontSize: 36,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Correo: ${usuario['email']}', // Correo dinámico
+                      'Correo: ${usuario['email']}',
                       style: const TextStyle(
                         fontSize: 18,
                         color: Colors.grey,
@@ -47,7 +55,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Teléfono: ${usuario['telefono']}', // Teléfono dinámico
+                      'Teléfono: ${usuario['telefono']}',
                       style: const TextStyle(
                         fontSize: 18,
                         color: Colors.grey,
@@ -58,7 +66,6 @@ class ProfilePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 40),
-            // Lista con botones estilo ListTile
             Expanded(
               child: ListView(
                 children: [
@@ -66,36 +73,21 @@ class ProfilePage extends StatelessWidget {
                     leading: const Icon(Icons.bookmark, color: Colors.blueGrey),
                     title: const Text(
                       'Mis Reservas',
-                      style: TextStyle(fontSize: 18, color: Colors.black), // Color negro
+                      style: TextStyle(fontSize: 18, color: Colors.black),
                     ),
-                     onTap: () {
-                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ReservationsPage(email: usuario['email']), 
-                          ),
-                      );
-                    },
+                    onTap: navigateToReservations,
                   ),
                   ListTile(
                     leading: const Icon(Icons.favorite, color: Colors.blueGrey),
                     title: const Text(
                       'Favoritos',
-                      style: TextStyle(fontSize: 18, color: Colors.black), // Color negro
+                      style: TextStyle(fontSize: 18, color: Colors.black),
                     ),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FavoritesPage(email: usuario['email']), 
-                          )
-                      );
-                    },
+                    onTap: navigateToFavorites,
                   ),
                 ],
               ),
             ),
-            // Puntos acumulados en la esquina inferior izquierda
             Align(
               alignment: Alignment.bottomLeft,
               child: Text(
