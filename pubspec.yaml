@@ -1,0 +1,38 @@
+name: flutter_application_1
+description: "A new Flutter project."
+
+publish_to: 'none'
+
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  intl: ^0.18.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo_app.png
+    - assets/usuario.png
+    - assets/persona.jpg
+    - assets/usuarios.json
+    - assets/Audi A3.png
+    - assets/BMW serie 1.png
+    - assets/Citroen C3.png
+    - assets/Ford Fiesta.png
+    - assets/Mini cooper.png
+    - assets/Peugeot 208.png
+    - assets/Renault Clio.png
+    - assets/Hotel Eiffel.png
+    - assets/Hotel London Bridge.png
+    - assets/Hotel Louvre.png
+    - assets/Hotel Soho.png
