@@ -33,9 +33,9 @@ class _MainLayoutState extends State<MainLayout> {
         navigateToReservations: _navigateToReservations,
         navigateToFavorites: _navigateToFavorites,
       ),
-      const SearchCarsPage(),
+      SearchCarsPage(usuario: widget.usuario),
       SearchFlightsPage(usuario: widget.usuario),
-      const SearchHotelsPage(),
+      SearchHotelsPage(usuario: widget.usuario),
     ];
     _currentPage = _pages[0];
   }
@@ -80,113 +80,120 @@ class _MainLayoutState extends State<MainLayout> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          Container(
-            width: 250,
-            color: Colors.blueGrey[50],
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const CircleAvatar(
-                        radius: 40,
-                        backgroundImage: AssetImage('assets/persona.jpg'),
-                      ),
-                      const SizedBox(height: 13),
-                      Text(
-                        widget.usuario['nombre'],
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey[800],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.usuario['email'],
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.home, color: Colors.blueGrey),
-                  title: const Text('Inicio'),
-                  onTap: _navigateToHome,
-                ),
-                Column(
+ Widget build(BuildContext context) {
+  return Scaffold(
+    body: Row(
+      children: [
+        Container(
+          width: 250,
+          color: Colors.blueGrey[50],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ListTile(
-                      leading: const Icon(Icons.person, color: Colors.blueGrey),
-                      title: Row(
-                        children: [
-                          const Expanded(child: Text('Perfil')),
-                          IconButton(
-                            icon: Icon(
-                              _isProfileExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                              color: Colors.blueGrey,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _isProfileExpanded = !_isProfileExpanded;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      onTap: () => _onItemSelected(1, 'Perfil'),
+                    const CircleAvatar(
+                      radius: 40,
+                      backgroundImage: AssetImage('assets/persona.jpg'),
                     ),
-                    if (_isProfileExpanded) ...[
-                      ListTile(
-                        leading: const Icon(Icons.bookmark, color: Colors.blueGrey),
-                        title: const Text('Reservas'),
-                        contentPadding: const EdgeInsets.only(left: 32.0),
-                        onTap: _navigateToReservations,
+                    const SizedBox(height: 13),
+                    Text(
+                      widget.usuario['nombre'],
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey[800],
                       ),
-                      ListTile(
-                        leading: const Icon(Icons.favorite, color: Colors.blueGrey),
-                        title: const Text('Favoritos'),
-                        contentPadding: const EdgeInsets.only(left: 32.0),
-                        onTap: _navigateToFavorites,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.usuario['email'],
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
                       ),
-                    ],
+                    ),
                   ],
                 ),
-                ListTile(
-                  leading: const Icon(Icons.directions_car, color: Colors.blueGrey),
-                  title: const Text('Coches'),
-                  onTap: () => _onItemSelected(2, 'Coches'),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.flight, color: Colors.blueGrey),
-                  title: const Text('Vuelos'),
-                  onTap: () => _onItemSelected(3, 'Vuelos'),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.hotel, color: Colors.blueGrey),
-                  title: const Text('Hoteles'),
-                  onTap: () => _onItemSelected(4, 'Hoteles'),
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.logout, color: Colors.blueGrey),
-                  title: const Text('Cerrar sesión'),
-                  onTap: _logout,
-                ),
-              ],
-            ),
+              ),
+              const Divider(),
+              // ListTile para Inicio
+              ListTile(
+                leading: const Icon(Icons.home, color: Colors.blueGrey),
+                title: const Text('Inicio'),
+                onTap: _navigateToHome,
+              ),
+              Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.person, color: Colors.blueGrey),
+                    title: Row(
+                      children: [
+                        const Expanded(child: Text('Perfil')),
+                        IconButton(
+                          icon: Icon(
+                            _isProfileExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                            color: Colors.blueGrey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isProfileExpanded = !_isProfileExpanded;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    onTap: () => _onItemSelected(1, 'Perfil'),
+                  ),
+                  // Opciones de perfil expandido
+                  if (_isProfileExpanded) ...[
+                    ListTile(
+                      leading: const Icon(Icons.bookmark, color: Colors.blueGrey),
+                      title: const Text('Reservas'),
+                      contentPadding: const EdgeInsets.only(left: 32.0),
+                      onTap: _navigateToReservations,
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.favorite, color: Colors.blueGrey),
+                      title: const Text('Favoritos'),
+                      contentPadding: const EdgeInsets.only(left: 32.0),
+                      onTap: _navigateToFavorites,
+                    ),
+                  ],
+                ],
+              ),
+              // Opciones principales
+              ListTile(
+                leading: const Icon(Icons.directions_car, color: Colors.blueGrey),
+                title: const Text('Coches'),
+                onTap: () => _onItemSelected(2, 'Coches'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.flight, color: Colors.blueGrey),
+                title: const Text('Vuelos'),
+                onTap: () => _onItemSelected(3, 'Vuelos'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.hotel, color: Colors.blueGrey),
+                title: const Text('Hoteles'),
+                onTap: () => _onItemSelected(4, 'Hoteles'),
+              ),
+              const Divider(),
+              // Opción de cerrar sesión
+              ListTile(
+                leading: const Icon(Icons.logout, color: Colors.blueGrey),
+                title: const Text('Cerrar sesión'),
+                onTap: _logout,
+              ),
+            ],
           ),
+        ),
+        // Aquí puedes agregar el contenido principal a la derecha, si es necesario
+      
+
           Expanded(
             child: Column(
               children: [
@@ -242,37 +249,91 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '¿Qué estás buscando?',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.blueGrey[800],
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '¿Qué estás buscando?',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.blueGrey[800],
+          ),
+        ),
+        const SizedBox(height: 20),
+        // Fila de botones
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribuye los botones de manera uniforme
+          children: [
+            _buildSquareButton(
+              icon: Icons.directions_car,
+              label: 'Coches',
+              onTap: () => onItemSelected(2, 'Coches'),
+              backgroundImage: 'assets/Audi A3.png', // Ruta de la imagen para el fondo
             ),
-          ),
-          const SizedBox(height: 20),
-          ListTile(
-            leading: const Icon(Icons.directions_car),
-            title: const Text('Coches'),
-            onTap: () => onItemSelected(2, 'Coches'),
-          ),
-          ListTile(
-            leading: const Icon(Icons.flight),
-            title: const Text('Vuelos'),
-            onTap: () => onItemSelected(3, 'Vuelos'),
-          ),
-          ListTile(
-            leading: const Icon(Icons.hotel),
-            title: const Text('Hoteles'),
-            onTap: () => onItemSelected(4, 'Hoteles'),
+            _buildSquareButton(
+              icon: Icons.flight,
+              label: 'Vuelos',
+              onTap: () => onItemSelected(3, 'Vuelos'),
+              backgroundImage: 'assets/logo_app.png', // Ruta de la imagen para el fondo
+            ),
+            _buildSquareButton(
+              icon: Icons.hotel,
+              label: 'Hoteles',
+              onTap: () => onItemSelected(4, 'Hoteles'),
+              backgroundImage: 'assets/Hotel London.png', // Ruta de la imagen para el fondo
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildSquareButton({
+  required IconData icon,
+  required String label,
+  required VoidCallback onTap,
+  required String backgroundImage, // Ruta de la imagen para el fondo
+}) {
+  return Container(
+    width: 300, // Ancho del botón
+    height: 300, // Alto del botón
+    margin: const EdgeInsets.symmetric(horizontal: 8.0), // Margen entre los botones
+    decoration: BoxDecoration(
+      image: DecorationImage(
+        image: AssetImage(backgroundImage), // Fondo de la imagen
+        fit: BoxFit.cover, // Ajusta la imagen al tamaño del botón
+      ),
+      borderRadius: BorderRadius.circular(8), // Bordes redondeados
+    ),
+    child: ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent, // El fondo será la imagen, así que lo hacemos transparente
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8), // Bordes redondeados
+        ),
+        padding: EdgeInsets.zero, // Elimina el padding adicional
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center, // Centra el contenido
+        children: [
+          Icon(icon, size: 40, color: Colors.white), // Icono en blanco sobre el fondo
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 18, // Tamaño de texto
+              fontWeight: FontWeight.bold,
+              color: Colors.white, // Texto blanco sobre el fondo
+            ),
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
