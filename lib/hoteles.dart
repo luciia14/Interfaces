@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'products_lists_view.dart';
 class SearchHotelsPage extends StatefulWidget {
-  const SearchHotelsPage({Key? key}) : super(key: key);
+  final Map<String, dynamic> usuario;  // Asegúrate de pasar 'usuario' al widget
+
+  const SearchHotelsPage({Key? key, required this.usuario}) : super(key: key);
 
   @override
   _SearchHotelsPageState createState() => _SearchHotelsPageState();
@@ -36,7 +38,6 @@ class _SearchHotelsPageState extends State<SearchHotelsPage> {
         'capacity': '2',
         'location': 'Buena',
       },
-     
       {
         'name': 'Hotel Soho',
         'price': '250€/noche',
@@ -90,7 +91,14 @@ class _SearchHotelsPageState extends State<SearchHotelsPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Reserva realizada con éxito')),
               );
-              Navigator.pop(context);
+              // Navegar a MainLayout después de confirmar la reserva
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MainLayout(usuario: widget.usuario),
+                ),
+                (route) => false, // Elimina las rutas anteriores
+              );
             },
             child: const Text('Confirmar'),
           ),
@@ -102,140 +110,175 @@ class _SearchHotelsPageState extends State<SearchHotelsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Buscar Hoteles'),
-        backgroundColor: const Color.fromARGB(255, 235, 180, 0), // Amarillo
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Buscar destino',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-              onChanged: _filterHotels,
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: filteredHotels.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: filteredHotels.length,
-                      itemBuilder: (context, index) {
-                        final hotel = filteredHotels[index];
-                        final isFavorite = favoriteHotels.contains(hotel['name']);
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Espacio para la flecha
+                const SizedBox(height: 40),
 
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 12.0),
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  'assets/${hotel['name']}.png',
-                                  height: 120,
-                                  width: 150,
-                                  fit: BoxFit.cover,
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        hotel['name']!,
-                                        style: const TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        '${hotel['price']} - ${hotel['capacity']} personas',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.blueGrey,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
+                const Text(
+                  'Buscar Hoteles',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 20), // Espacio entre la cabecera y el campo de búsqueda
+
+                // Campo de búsqueda de hoteles
+                TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    labelText: 'Buscar destino',
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onChanged: _filterHotels,
+                ),
+                const SizedBox(height: 20),
+
+                Expanded(
+                  child: filteredHotels.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: filteredHotels.length,
+                          itemBuilder: (context, index) {
+                            final hotel = filteredHotels[index];
+                            final isFavorite = favoriteHotels.contains(hotel['name']);
+                            return Card(
+                              margin: const EdgeInsets.symmetric(vertical: 12.0),
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      'assets/${hotel['name']}.png',
+                                      height: 120,
+                                      width: 150,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'Puntuación: ${hotel['rating']}⭐',
+                                            hotel['name']!,
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            '${hotel['price']} - ${hotel['capacity']} personas',
+                                            style: const TextStyle(
+                                              fontSize: 16,
                                               color: Colors.blueGrey,
                                             ),
                                           ),
-                                          const SizedBox(width: 16),
-                                          Text(
-                                            'Ubicación: ${hotel['location']}',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: hotel['location'] == 'Buena'
-                                                  ? Colors.green
-                                                  : hotel['location'] == 'Regular'
-                                                      ? Colors.orange
-                                                      : Colors.red,
-                                            ),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Puntuación: ${hotel['rating']}⭐',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.blueGrey,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 16),
+                                              Text(
+                                                'Ubicación: ${hotel['location']}',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: hotel['location'] == 'Buena'
+                                                      ? Colors.green
+                                                      : hotel['location'] == 'Regular'
+                                                          ? Colors.orange
+                                                          : Colors.red,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                Column(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(
-                                        isFavorite
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: isFavorite ? Colors.red : Colors.grey,
-                                      ),
-                                      onPressed: () => _toggleFavorite(hotel['name']!),
                                     ),
-                                    ElevatedButton(
-                                      onPressed: () => _reserveHotel(hotel['name']!),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                    Column(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(
+                                            isFavorite
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: isFavorite ? Colors.red : Colors.grey,
+                                          ),
+                                          onPressed: () => _toggleFavorite(hotel['name']!),
                                         ),
-                                      ),
-                                      child: const Text('Reservar'),
+                                        ElevatedButton(
+                                          onPressed: () => _reserveHotel(hotel['name']!),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.green,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text('Reservar'),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            );
+                          },
+                        )
+                      : const Center(
+                          child: Text(
+                            'No se encontraron hoteles para este destino.',
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
                           ),
-                        );
-                      },
-                    )
-                  : const Center(
-                      child: Text(
-                        'No se encontraron hoteles para este destino.',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    ),
+                        ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          // La flecha en la esquina izquierda
+          Positioned(
+            top: 30, // Ajusta la posición vertical
+            left: 10, // Ajusta la posición horizontal
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                size: 40.0,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MainLayout(usuario: widget.usuario),
+                  ),
+                  (route) => false, // Elimina las rutas anteriores
+                );
+              }, // Redirige al Home
+            ),
+          ),
+        ],
       ),
     );
   }
 }
-
