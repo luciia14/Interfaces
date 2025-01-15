@@ -87,16 +87,28 @@ class ProfilePage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    'Puntos acumulados: ${usuario['puntos']}',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                
+                // Tooltip para los puntos acumulados
+                Row(
+                  children: [
+                    Text(
+                      'Puntos acumulados: ${usuario['puntos']}',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
+                    // Añadir el Tooltip aquí
+                    Tooltip(
+                      message:
+                          'Los puntos acumulados se utilizan para obtener descuentos, recompensas exclusivas y otros beneficios dentro de la aplicación. ¡Sigue participando para ganar más!',
+                      child: const Icon(
+                        Icons.info_outline,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

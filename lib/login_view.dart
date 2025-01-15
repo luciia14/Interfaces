@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'products_lists_view.dart';  
 import 'autenticacion.dart'; 
 
+
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -25,17 +26,25 @@ class _LoginViewState extends State<LoginView> {
             children: [
               // Logo de imagen
               Image.asset(
-                'assets/logo_app.png',
+                'assets/logo_app_color.png',
               ),
               const SizedBox(height: 20),
 
-              // Título de bienvenida
+              // Título de bienvenida 
               Text(
-                'Bienvenido',
+                'Bienvenid@ a Trekko',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF003366), // Azul marino
+                  color: const Color(0xFF8A2BE2), // Lila
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                '~Descubre la magia del mundo con nosotras~',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color(0xFF8A2BE2), // Lila
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -53,8 +62,8 @@ class _LoginViewState extends State<LoginView> {
                   filled: true,
                   fillColor: Colors.white,
                   labelText: 'Correo Electrónico',
-                  labelStyle: const TextStyle(color: Color(0xFF003366)), // Azul marino
-                  prefixIcon: const Icon(Icons.email, color: Color(0xFF003366)),
+                  labelStyle: const TextStyle(color: Color(0xFF8A2BE2)), // Lila
+                  prefixIcon: const Icon(Icons.email, color: Color(0xFF8A2BE2)), // Lila
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -71,8 +80,8 @@ class _LoginViewState extends State<LoginView> {
                   filled: true,
                   fillColor: Colors.white,
                   labelText: 'Contraseña',
-                  labelStyle: const TextStyle(color: Color(0xFF003366)), // Azul marino
-                  prefixIcon: const Icon(Icons.lock, color: Color(0xFF003366)),
+                  labelStyle: const TextStyle(color: Color(0xFF8A2BE2)), // Lila
+                  prefixIcon: const Icon(Icons.lock, color: Color(0xFF8A2BE2)), // Lila
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -119,7 +128,7 @@ class _LoginViewState extends State<LoginView> {
       }
     },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 209, 50, 26), // Rojo brillante
+                    backgroundColor: const Color(0xFFFFC107), // Naranja claro
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -127,7 +136,7 @@ class _LoginViewState extends State<LoginView> {
                   ),
                   child: const Text(
                     'Iniciar Sesión',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
                   ),
                 ),
               ),
@@ -150,7 +159,7 @@ class _LoginViewState extends State<LoginView> {
                     },
                     child: const Text(
                       'Regístrate aquí',
-                      style: TextStyle(color: Color(0xFF003366)),  // Azul marino
+                      style: TextStyle(color: Color(0xFF8A2BE2)), // Lila
                     ),
                   ),
                 ],
@@ -171,6 +180,7 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
+
 
 
 class RegisterView extends StatefulWidget {
@@ -222,7 +232,7 @@ class _RegisterViewState extends State<RegisterView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registro'),
-        backgroundColor: const Color.fromARGB(255, 113, 138, 84), // Azul marino
+        backgroundColor: const Color(0xFF8A2BE2), // Lila
       ),
       backgroundColor: const Color(0xFFF5F5F5),
       body: SingleChildScrollView(
@@ -238,7 +248,7 @@ class _RegisterViewState extends State<RegisterView> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF003366), // Azul marino
+                  color: Color(0xFF8A2BE2), // Lila
                 ),
               ),
               const SizedBox(height: 16),
@@ -248,7 +258,7 @@ class _RegisterViewState extends State<RegisterView> {
                 controller: _nameController,
                 decoration: InputDecoration(
                   labelText: 'Nombre Completo',
-                  prefixIcon: const Icon(Icons.person, color: Color(0xFF003366)), // Azul marino
+                  prefixIcon: const Icon(Icons.person, color: Color(0xFF8A2BE2)), // Lila
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -270,7 +280,7 @@ class _RegisterViewState extends State<RegisterView> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Correo Electrónico',
-                  prefixIcon: const Icon(Icons.email, color: Color(0xFF003366)), // Azul marino
+                  prefixIcon: const Icon(Icons.email, color: Color(0xFF8A2BE2)), // Lila
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -288,7 +298,7 @@ class _RegisterViewState extends State<RegisterView> {
                 controller: _phoneController,
                 decoration: InputDecoration(
                   labelText: 'Teléfono',
-                  prefixIcon: const Icon(Icons.phone, color: Color(0xFF003366)), // Azul marino
+                  prefixIcon: const Icon(Icons.phone, color: Color(0xFF8A2BE2)), // Lila
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -306,7 +316,7 @@ class _RegisterViewState extends State<RegisterView> {
                 controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Contraseña',
-                  prefixIcon: const Icon(Icons.lock, color: Color(0xFF003366)), // Azul marino
+                  prefixIcon: const Icon(Icons.lock, color: Color(0xFF8A2BE2)), // Lila
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
@@ -330,7 +340,7 @@ class _RegisterViewState extends State<RegisterView> {
                 child: ElevatedButton(
                   onPressed: _register,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 209, 50, 26), // Rojo brillante
+                    backgroundColor: const Color(0xFFFFC107), // Naranja claro
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -352,7 +362,7 @@ class _RegisterViewState extends State<RegisterView> {
                   },
                   child: const Text(
                     '¿Ya tienes una cuenta? Inicia sesión',
-                    style: TextStyle(color: Color(0xFF003366)), // Azul marino
+                    style: TextStyle(color: Color(0xFF8A2BE2)), // Lila
                   ),
                 ),
               ),
