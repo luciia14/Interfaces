@@ -80,146 +80,183 @@ class _MainLayoutState extends State<MainLayout> {
   }
 
   @override
- Widget build(BuildContext context) {
-  return Scaffold(
-    body: Row(
-      children: [
-        Container(
-          width: 250,
-          color: Colors.blueGrey[50],
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage('assets/persona.jpg'),
-                    ),
-                    const SizedBox(height: 13),
-                    Text(
-                      widget.usuario['nombre'],
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueGrey[800],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      widget.usuario['email'],
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Image.asset('assets/logo_app_color.png', height: 50),
+            const SizedBox(width: 25),
+            const Text(
+              'Bienvenido a Trekko',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              const Divider(),
-              // ListTile para Inicio
-              ListTile(
-                leading: const Icon(Icons.home, color: Colors.blueGrey),
-                title: const Text('Inicio'),
-                onTap: _navigateToHome,
-              ),
-              Column(
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFF8A2BE2), // Lila
+      ),
+      drawer: Drawer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ListTile(
-                    leading: const Icon(Icons.person, color: Colors.blueGrey),
-                    title: Row(
-                      children: [
-                        const Expanded(child: Text('Perfil')),
-                        IconButton(
-                          icon: Icon(
-                            _isProfileExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                            color: Colors.blueGrey,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isProfileExpanded = !_isProfileExpanded;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    onTap: () => _onItemSelected(1, 'Perfil'),
+                  const CircleAvatar(
+                    radius: 40,
+                    backgroundImage: AssetImage('assets/persona.jpg'),
                   ),
-                  // Opciones de perfil expandido
-                  if (_isProfileExpanded) ...[
-                    ListTile(
-                      leading: const Icon(Icons.bookmark, color: Colors.blueGrey),
-                      title: const Text('Reservas'),
-                      contentPadding: const EdgeInsets.only(left: 32.0),
-                      onTap: _navigateToReservations,
+                  const SizedBox(height: 13),
+                  Text(
+                    widget.usuario['nombre'],
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey[800],
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.favorite, color: Colors.blueGrey),
-                      title: const Text('Favoritos'),
-                      contentPadding: const EdgeInsets.only(left: 32.0),
-                      onTap: _navigateToFavorites,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.usuario['email'],
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
                     ),
-                  ],
+                  ),
                 ],
               ),
-              // Opciones principales
-              ListTile(
-                leading: const Icon(Icons.directions_car, color: Colors.blueGrey),
-                title: const Text('Coches'),
-                onTap: () => _onItemSelected(2, 'Coches'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.flight, color: Colors.blueGrey),
-                title: const Text('Vuelos'),
-                onTap: () => _onItemSelected(3, 'Vuelos'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.hotel, color: Colors.blueGrey),
-                title: const Text('Hoteles'),
-                onTap: () => _onItemSelected(4, 'Hoteles'),
-              ),
-              const Divider(),
-              // Opción de cerrar sesión
-              ListTile(
-                leading: const Icon(Icons.logout, color: Colors.blueGrey),
-                title: const Text('Cerrar sesión'),
-                onTap: _logout,
-              ),
-            ],
-          ),
-        ),
-        // Aquí puedes agregar el contenido principal a la derecha, si es necesario
-      
-
-          Expanded(
-            child: Column(
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.home, color: Colors.blueGrey),
+              title: const Text('Inicio'),
+              onTap: _navigateToHome,
+            ),
+            Column(
               children: [
-                Container(
-                  width: double.infinity,
-                  color: const Color.fromARGB(255, 235, 180, 0),
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
+                ListTile(
+                  leading: const Icon(Icons.person, color: Colors.blueGrey),
+                  title: Row(
                     children: [
-                      Image.asset('assets/logo_app.png', height: 70),
-                      const SizedBox(width: 25),
-                      const Text(
-                        'Bienvenido a nuestro portal de servicios',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      const Expanded(child: Text('Perfil')),
+                      IconButton(
+                        icon: Icon(
+                          _isProfileExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                          color: Colors.blueGrey,
                         ),
+                        onPressed: () {
+                          setState(() {
+                            _isProfileExpanded = !_isProfileExpanded;
+                          });
+                        },
                       ),
                     ],
                   ),
+                  onTap: () => _onItemSelected(1, 'Perfil'),
                 ),
-                
-                Expanded(child: _currentPage ?? const SizedBox()),
+                if (_isProfileExpanded) ...[
+                  ListTile(
+                    leading: const Icon(Icons.bookmark, color: Colors.blueGrey),
+                    title: const Text('Reservas'),
+                    contentPadding: const EdgeInsets.only(left: 32.0),
+                    onTap: _navigateToReservations,
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.favorite, color: Colors.blueGrey),
+                    title: const Text('Favoritos'),
+                    contentPadding: const EdgeInsets.only(left: 32.0),
+                    onTap: _navigateToFavorites,
+                  ),
+                ],
               ],
             ),
+            ListTile(
+              leading: const Icon(Icons.directions_car, color: Colors.blueGrey),
+              title: const Text('Coches'),
+              onTap: () => _onItemSelected(2, 'Coches'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.flight, color: Colors.blueGrey),
+              title: const Text('Vuelos'),
+              onTap: () => _onItemSelected(3, 'Vuelos'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.hotel, color: Colors.blueGrey),
+              title: const Text('Hoteles'),
+              onTap: () => _onItemSelected(4, 'Hoteles'),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.blueGrey),
+              title: const Text('Cerrar sesión'),
+              onTap: _logout,
+            ),
+          ],
+        ),
+      ),
+      body: Row(
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                Expanded(child: _currentPage ?? const SizedBox()),
+                _buildFooter(), // Aquí agregamos el pie de página
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooter() {
+    return Container(
+      color: const Color(0xFFD6ED9E), // Verde claro
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 28),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset('assets/logo_app_color.png', height: 40),
+              const SizedBox(width: 8),
+              const Text(
+                'Trekko',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Color(0xFF8A2BE2), // Lila
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Ayuda'),
+                  Text('Configuración de privacidad'),
+                  Text('Iniciar sesión'),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Política de cookies'),
+                  Text('Política de privacidad'),
+                  Text('Términos de servicio'),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -239,6 +276,7 @@ class Breadcrumb extends StatelessWidget {
     );
   }
 }
+
 class HomePage extends StatelessWidget {
   final Function(int, String) onItemSelected;
 
@@ -249,91 +287,90 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '¿Qué estás buscando?',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.blueGrey[800],
-          ),
-        ),
-        const SizedBox(height: 20),
-        // Fila de botones
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Distribuye los botones de manera uniforme
-          children: [
-            _buildSquareButton(
-              icon: Icons.directions_car,
-              label: 'Coches',
-              onTap: () => onItemSelected(2, 'Coches'),
-              backgroundImage: 'assets/Audi A3.png', // Ruta de la imagen para el fondo
-            ),
-            _buildSquareButton(
-              icon: Icons.flight,
-              label: 'Vuelos',
-              onTap: () => onItemSelected(3, 'Vuelos'),
-              backgroundImage: 'assets/logo_app.png', // Ruta de la imagen para el fondo
-            ),
-            _buildSquareButton(
-              icon: Icons.hotel,
-              label: 'Hoteles',
-              onTap: () => onItemSelected(4, 'Hoteles'),
-              backgroundImage: 'assets/Hotel London.png', // Ruta de la imagen para el fondo
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _buildSquareButton({
-  required IconData icon,
-  required String label,
-  required VoidCallback onTap,
-  required String backgroundImage, // Ruta de la imagen para el fondo
-}) {
-  return Container(
-    width: 300, // Ancho del botón
-    height: 300, // Alto del botón
-    margin: const EdgeInsets.symmetric(horizontal: 8.0), // Margen entre los botones
-    decoration: BoxDecoration(
-      image: DecorationImage(
-        image: AssetImage(backgroundImage), // Fondo de la imagen
-        fit: BoxFit.cover, // Ajusta la imagen al tamaño del botón
-      ),
-      borderRadius: BorderRadius.circular(8), // Bordes redondeados
-    ),
-    child: ElevatedButton(
-      onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.transparent, // El fondo será la imagen, así que lo hacemos transparente
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // Bordes redondeados
-        ),
-        padding: EdgeInsets.zero, // Elimina el padding adicional
-      ),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // Centra el contenido
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 40, color: Colors.white), // Icono en blanco sobre el fondo
-          const SizedBox(height: 8),
           Text(
-            label,
-            style: const TextStyle(
-              fontSize: 18, // Tamaño de texto
+            '¿Qué estás buscando?',
+            style: TextStyle(
+              fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.white, // Texto blanco sobre el fondo
+              color: Colors.blueGrey[800],
             ),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildSquareButton(
+                icon: Icons.directions_car,
+                label: 'Coches',
+                onTap: () => onItemSelected(2, 'Coches'),
+                backgroundImage: 'assets/alquiler_coches.jpg',
+              ),
+              _buildSquareButton(
+                icon: Icons.flight,
+                label: 'Vuelos',
+                onTap: () => onItemSelected(3, 'Vuelos'),
+                backgroundImage: 'assets/avion_reserva.jpg',
+              ),
+              _buildSquareButton(
+                icon: Icons.hotel,
+                label: 'Hoteles',
+                onTap: () => onItemSelected(4, 'Hoteles'),
+                backgroundImage: 'assets/reserva_hotel.jpg',
+              ),
+            ],
           ),
         ],
       ),
-    ),
-  );
-}
+    );
+  }
+
+  Widget _buildSquareButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required String backgroundImage,
+  }) {
+    return Container(
+      width: 300,
+      height: 300,
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(backgroundImage),
+          fit: BoxFit.cover,
+        ),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: EdgeInsets.zero,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 40, color: Colors.white),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
