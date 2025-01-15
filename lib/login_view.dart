@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'products_lists_view.dart';  
-import 'autenticacion.dart'; 
-
+import 'products_lists_view.dart';
+import 'autenticacion.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -17,169 +16,165 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5), // Gris claro
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Logo de imagen
-              Image.asset(
-                'assets/logo_app_color.png',
-              ),
-              const SizedBox(height: 20),
-
-              // Título de bienvenida 
-              Text(
-                'Bienvenid@ a Trekko',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF8A2BE2), // Lila
-                ),
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                '~Descubre la magia del mundo con nosotras~',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: const Color(0xFF8A2BE2), // Lila
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Inicia sesión para continuar',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 32),
-
-              // Campo de texto para Email
-              TextField(
-                controller: _emailController, // Conecta el controlador
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  labelText: 'Correo Electrónico',
-                  labelStyle: const TextStyle(color: Color(0xFF8A2BE2)), // Lila
-                  prefixIcon: const Icon(Icons.email, color: Color(0xFF8A2BE2)), // Lila
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 20),
-
-              // Campo de texto para Contraseña
-              TextField(
-                controller: _passwordController, // Conecta el controlador
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  labelText: 'Contraseña',
-                  labelStyle: const TextStyle(color: Color(0xFF8A2BE2)), // Lila
-                  prefixIcon: const Icon(Icons.lock, color: Color(0xFF8A2BE2)), // Lila
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 30),
-
-              // Botón de Inicio de Sesión
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final String email = _emailController.text; // Obtén el email del controlador
-                    final String contrasena = _passwordController.text; // Obtén la contraseña del controlador
-
-                    final bool esValido = await verificarInicioSesion(email, contrasena); // Llama a la función
-
-                   if (esValido) {
-        // Si el inicio de sesión es válido, obtenemos los datos del usuario
-        final Map<String, dynamic>? usuario = await obtenerUsuarioPorEmail(email);
-
-        if (usuario != null) {
-          // Almacenar o utilizar los datos del usuario
-          print('Usuario logueado: ${usuario['nombre']} - ${usuario['email']}');
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Inicio de sesión exitoso')),
-          );
-
-          // Redirige a la pantalla principal y pasa los datos del usuario
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MainLayout(usuario: usuario), // Pasa los datos del usuario
+      body: Stack(
+        children: [
+          // Imagen de fondo
+          SizedBox.expand(
+            child: Image.asset(
+              'assets/maleta.jpg',
+              fit: BoxFit.cover,
             ),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Email o contraseña incorrectos')),
-        );
-      }
-    },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFC107), // Naranja claro
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+          ),
+          // Filtro oscuro para resaltar el contenido
+          Container(
+            color: Colors.black.withOpacity(0.5),
+          ),
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(32.0),
+              child: Container(
+                padding: const EdgeInsets.all(24.0),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.85),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
                     ),
-                  ),
-                  child: const Text(
-                    'Iniciar Sesión',
-                    style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
-                  ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 16),
-              // Enlace para registrarse
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    '¿No tienes cuenta?',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Acción para redirigir al formulario de registro
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const RegisterView()),
-                      );
-                    },
-                    child: const Text(
-                      'Regístrate aquí',
-                      style: TextStyle(color: Color(0xFF8A2BE2)), // Lila
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Logo
+                    Image.asset(
+                      'assets/logo_app_color.png',
+                      height: 100,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16), // Espacio entre el Row y el texto
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.0), // Espacio lateral
-                    child: Text(
-                      'Al iniciar sesión o al crear una cuenta, aceptas nuestros Términos y condiciones y la Política de privacidad',
-                      style: TextStyle(color: Colors.grey),
+                    const SizedBox(height: 20),
+                    // Título
+                    const Text(
+                      'Bienvenid@ a Trekko',
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF8A2BE2),
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                   )
-            ],
+                    const SizedBox(height: 8),
+                    const Text(
+                      '~ Descubre la magia del mundo ~',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    // Campo Email
+                    TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        labelText: 'Correo Electrónico',
+                        prefixIcon: const Icon(Icons.email, color: Color(0xFF8A2BE2)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 20),
+                    // Campo Contraseña
+                    TextField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        labelText: 'Contraseña',
+                        prefixIcon: const Icon(Icons.lock, color: Color(0xFF8A2BE2)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 30),
+                    // Botón de Inicio de Sesión
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final String email = _emailController.text;
+                          final String contrasena = _passwordController.text;
+                          final bool esValido = await verificarInicioSesion(email, contrasena);
+
+                          if (esValido) {
+                            final Map<String, dynamic>? usuario = await obtenerUsuarioPorEmail(email);
+                            if (usuario != null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MainLayout(usuario: usuario),
+                                ),
+                              );
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Email o contraseña incorrectos')),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFFC107),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          'Iniciar Sesión',
+                          style: TextStyle(fontSize: 16, color: Colors.black),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('¿No tienes cuenta?', style: TextStyle(color: Colors.grey)),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const RegisterView()),
+                        );
+                      },
+                      child: const Text(
+                        'Regístrate aquí',
+                        style: TextStyle(color: Color(0xFF8A2BE2)),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Text(
+                        'Al iniciar sesión o al crear una cuenta, aceptas nuestros Términos y condiciones y la Política de privacidad',
+                        style: TextStyle(color: Colors.grey),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
+
 
 
 
