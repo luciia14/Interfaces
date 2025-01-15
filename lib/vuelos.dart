@@ -142,16 +142,19 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
             child: Column(
               children: [
                 const SizedBox(height: 40), // Espacio para la flecha
-                const Text(
-                  'Buscar Vuelos',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                // Cambiar el alineamiento del texto a la izquierda
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: const Text(
+                    'Buscar Vuelos',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ), // Espacio entre la cabecera y el campo de búsqueda
                   ),
                 ),
-                const SizedBox(height: 20), // Espacio entre la cabecera y el campo de búsqueda
-
+                const SizedBox(height: 30),
                 // Campo de Ciudad de Salida
                 TextField(
                   controller: _departureController,
@@ -187,17 +190,6 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
                 ),
                 const SizedBox(height: 20),
 
-                // Mostrar texto de selección de vuelo
-                if (_idaSeleccionada && _vueloIdaSeleccionado != null)
-                  const Text(
-                    'Selecciona vuelo de ida',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                if (!_idaSeleccionada)
-                  const Text(
-                    'Selecciona vuelo de vuelta',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
 
                 // Espacio para las fechas
                 Row(
@@ -315,3 +307,5 @@ class _SearchFlightsPageState extends State<SearchFlightsPage> {
     );
   }
 }
+
+
